@@ -1,0 +1,47 @@
+---
+title: "ThinkLab CCC Survey Response Processing"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages and utils
+
+```{r load, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+source("utils.R")
+```
+
+Load the csv of survey results and reshape it, only keeping the quantitative questions
+
+```{r process}
+survey_path <- "survey_responses/ThinkLab CCC_ Survey for the Museums.csv"
+n_questions <- paste0(c(rep(1, 6), rep(2, 7)), ".", c(1:6, 1:7))
+df <- read.csv(survey_path) %>%
+  responses_reformat()
+```
+
+Create faceted histograms of answers, as well as a histogram per question
+
+```{r histograms}
+histogram_faceted(df)
+for(qn in n_questions){
+  print(histogram_individual(df, questions = qn))
+}
+```
+
+Compare questions (the pairs can be modified)
+
+```{r comparisons, message = FALSE}
+pairs <- list(c("1.1", "1.2"),
+              c("1.3", "1.4"),
+              c("2.2", "2.6"))
+
+for(i in seq_len(length(pairs))){
+  print(pair_plot(df, pair = pairs[[i]]))
+}
+```
+
