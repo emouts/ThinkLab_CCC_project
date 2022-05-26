@@ -36,12 +36,16 @@ for(qn in n_questions){
 Compare questions (the pairs can be modified)
 
 ```{r comparisons, message = FALSE}
-pairs <- list(c("1.1", "1.2"),
-              c("1.3", "1.4"),
-              c("2.2", "2.6"))
+n_questions <- paste0(c(rep(1, 6), rep(2, 7)), ".", c(1:6, 1:7))
+pairs <- rbind(expand.grid(n_questions[1:6], n_questions[1:6]),
+               expand.grid(n_questions[7:13], n_questions[7:13])) %>%
+  mutate(v2 = as.numeric(as.character(Var2)), v1 = as.numeric(as.character(Var1))) %>%
+  filter(v1 > v2) %>%
+  select(Var2, Var1)
 
-for(i in seq_len(length(pairs))){
-  print(pair_plot(df, pair = pairs[[i]]))
+for(i in seq_len(nrow(pairs))){
+  f <- unlist(pairs[i, ])
+  print(pair_plot(df, pair = levels(f)[f]))
 }
 ```
 
